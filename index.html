@@ -216,13 +216,18 @@
       }
       create() {
         const now = Date.now();
-        if(now - this.lastSpawn < 800) return;
+        if (now - this.lastSpawn < 800) return;
         this.lastSpawn = now;
         let lantern = this.pool.pop();
-        if(!lantern) {
+        if (!lantern) {
           lantern = document.createElement('div');
           lantern.className = 'lantern';
+          // Adiciona eventos de clique e toque para corrigir o atraso em dispositivos móveis
           lantern.addEventListener('click', this.showMessage);
+          lantern.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.showMessage();
+          });
           lantern.addEventListener('animationend', () => this.recycle(lantern));
         }
         Object.assign(lantern.style, {
@@ -247,7 +252,7 @@
         document.addEventListener('keydown', this.handleKeyPress);
       }
       handleKeyPress = (e) => {
-        if(e.key === 'Escape') closeModal();
+        if (e.key === 'Escape') closeModal();
       }
     }
     const manager = new LanternManager();
@@ -260,16 +265,16 @@
     window.addEventListener('blur', () => cancelAnimationFrame(animationFrame));
     window.addEventListener('focus', animate);
   
-    // Fechar modal
+    // Função para fechar o modal
     function closeModal() {
       document.getElementById('modal').classList.remove('active');
       document.removeEventListener('keydown', manager.handleKeyPress);
     }
     // Fecha o modal ao clicar fora do conteúdo
     document.getElementById('modal').addEventListener('click', (e) => {
-      if(e.target === e.currentTarget) closeModal();
+      if (e.target === e.currentTarget) closeModal();
     });
-    // Para dispositivos touch: simula clique na lanterna
+    // (Opcional) Para dispositivos touch: simula clique na lanterna
     window.addEventListener('touchstart', (e) => {
       [...document.elementsFromPoint(e.touches[0].clientX, e.touches[0].clientY)]
         .filter(el => el.classList.contains('lantern'))
