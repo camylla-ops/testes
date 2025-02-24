@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>天灯情缘 - 爱的使者</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="放飞天灯，传递爱的讯息">
+  <style>
+    :root {
+      --primary-color: #e94d58;
+      --lantern-gold: linear-gradient(145deg, #FFD700 30%, #FFB347 70%);
+      --animation-curve: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      touch-action: manipulation;
+      position: relative;
+    }
+    /* Fundo estrelado */
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--twinkle-duration) ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    /* Container das lanternas */
+    .lantern-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+      filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+    }
+    /* Lanternas animadas subindo */
+    .lantern {
+      position: absolute;
+      width: 60px;
+      height: 80px;
+      background: var(--lantern-gold);
+      border-radius: 30px 30px 15px 15px;
+      cursor: pointer;
+      animation: floatUp 18s var(--animation-curve) forwards;
+      transition: transform 0.3s;
+    }
+    .lantern:hover {
+      transform: scale(1.1);
+    }
+    .lantern::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      width: 40px;
+      height: 20px;
+      background: rgba(255, 69, 0, 0.6);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      filter: blur(5px);
+      animation: flame 0.8s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100px); }
+    }
+    @keyframes flame {
+      0%, 100% { transform: translateX(-50%) scale(0.9); opacity: 0.8; }
+      50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+    }
+    /* Modal com efeito de desfoque */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s, backdrop-filter 0.4s;
+      backdrop-filter: blur(0px);
+      z-index: 1000;
+    }
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+      backdrop-filter: blur(10px);
+    }
+    .modal-content {
+      background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform: scale(0.8);
+      transition: transform 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+    .modal-content h1 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+    .modal-content p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #4a4a4a;
+    }
+    .close-btn {
+      margin-top: 1.5rem;
+      padding: 10px 20px;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .lantern {
+        width: 50px;
+        height: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="lantern-container" id="lanternContainer"></div>
+  
+  <div class="modal" id="modal" role="dialog" aria-labelledby="loveMessage">
+    <div class="modal-content">
+      <h1>❤️ 爱的讯息 ❤️</h1>
+      <p id="loveMessage"></p>
+      <button class="close-btn" onclick="closeModal()" aria-label="关闭">✨ 关闭</button>
+    </div>
+  </div>
+  
+  <script>
+    // Função para criar o fundo estrelado
+    function createStars() {
+      const container = document.getElementById('stars');
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 3 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 5 + 's';
+        star.style.setProperty('--twinkle-duration', Math.random() * 3 + 2 + 's');
+        container.appendChild(star);
+      }
+    }
+    createStars();
+  
+    // Array com 30 mensagens românticas em chinês
+    const messages = [
+      "虽然我们还未见面，但我的心已经飞向你。",
+      "每一盏天灯都寄托着我对你的思念。",
+      "爱无距离，愿与你共赏满天星光。",
+      "即使远隔千里，你也是我心中的唯一。",
+      "夜空因你而闪耀，爱因你而永恒。",
+      "你的笑容是我生命中最美的风景。",
+      "每当想到你，心中就充满了温暖。",
+      "在这漫天星光中，我只为你而亮。",
+      "爱你，是我最坚定的信仰。",
+      "距离虽远，情意无限。",
+      "只要和你在一起，所有的等待都值得。",
+      "每个梦里都有你的身影，每个醒来都有你的温柔。",
+      "我们的缘分如同天灯般美丽而短暂，却灿烂绚丽。",
+      "遇见你，是我最美的奇迹。",
+      "你的名字，是我心中最温柔的诗篇。",
+      "你的眼神点亮了我黑暗的世界。",
+      "在爱的旅途中，你是我最珍贵的风景。",
+      "每一次心跳都在低语：我爱你。",
+      "思念如潮水，将我包围，只为寻你而去。",
+      "我们的爱，像天灯般温暖而闪耀。",
+      "你的每个微笑都让我心动不已。",
+      "爱是无言的誓言，在夜空中悄然绽放。",
+      "每颗星星都为你点亮，每阵风都传递着爱意。",
+      "在爱的世界里，你是我唯一的光芒。",
+      "愿我的爱如这天灯，穿越黑暗，直达你心。",
+      "我的心，永远为你跳动。",
+      "无论距离多远，我的爱都如影随形。",
+      "每一刻的相思，都在证明我们的缘分。",
+      "你的温柔，是我最深的依恋。",
+      "让这无数的天灯，带走我满满的爱意，直达你心底。"
+    ];
+  
+    // Classe para gerenciar as lanternas com pool para melhor performance
+    class LanternManager {
+      constructor() {
+        this.pool = [];
+        this.activeLanterns = [];
+        this.lastSpawn = 0;
+      }
+      create() {
+        const now = Date.now();
+        if(now - this.lastSpawn < 800) return;
+        this.lastSpawn = now;
+        let lantern = this.pool.pop();
+        if(!lantern) {
+          lantern = document.createElement('div');
+          lantern.className = 'lantern';
+          lantern.addEventListener('click', this.showMessage);
+          lantern.addEventListener('animationend', () => this.recycle(lantern));
+        }
+        Object.assign(lantern.style, {
+          left: Math.random() * (window.innerWidth - 60) + 'px',
+          animationDuration: Math.random() * 6 + 12 + 's',
+          opacity: '1'
+        });
+        document.getElementById('lanternContainer').appendChild(lantern);
+        this.activeLanterns.push(lantern);
+      }
+      recycle(lantern) {
+        lantern.style.opacity = '0';
+        setTimeout(() => {
+          lantern.remove();
+          this.pool.push(lantern);
+        }, 1000);
+      }
+      showMessage = () => {
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        document.getElementById('loveMessage').textContent = message;
+        document.getElementById('modal').classList.add('active');
+        document.addEventListener('keydown', this.handleKeyPress);
+      }
+      handleKeyPress = (e) => {
+        if(e.key === 'Escape') closeModal();
+      }
+    }
+    const manager = new LanternManager();
+    let animationFrame;
+    function animate() {
+      manager.create();
+      animationFrame = requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('blur', () => cancelAnimationFrame(animationFrame));
+    window.addEventListener('focus', animate);
+  
+    // Fechar modal
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+      document.removeEventListener('keydown', manager.handleKeyPress);
+    }
+    // Fecha o modal ao clicar fora do conteúdo
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if(e.target === e.currentTarget) closeModal();
+    });
+    // Para dispositivos touch: simula clique na lanterna
+    window.addEventListener('touchstart', (e) => {
+      [...document.elementsFromPoint(e.touches[0].clientX, e.touches[0].clientY)]
+        .filter(el => el.classList.contains('lantern'))
+        .forEach(lantern => lantern.click());
+    }, { passive: true });
+  </script>
+</body>
+</html>
